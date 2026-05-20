@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>promises</title>
+</head>
+<body>
+    <p id="title1" style="visibility: hidden;">title 1</p>
+    <p id="title2" style="visibility: hidden;">title 2</p>
+    <p id="title3" style="visibility: hidden;">title 3</p>
+</body>
+<script>
+    // setTimeout(() => {
+    //     document.getElementById('title1').style.visibility = 'visible';
+    // }, 1000);
+    // setTimeout(() => {
+    //     document.getElementById('title2').style.visibility = 'visible';
+    // }, 2000);
+    // setTimeout(() => {
+    //     document.getElementById('title3').style.visibility = 'visible';
+    // }, 3000);
+
+    new Promise((resolve, reject) => {
+        setTimeout(() => {
+            document.getElementById('title1').style.visibility = 'visible';
+            resolve();
+        }, 1000);
+    }).then(() => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                document.getElementById('title2').style.visibility = 'visible';
+                resolve();
+            }, 2000);
+        });
+    }).then(() => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                document.getElementById('title3').style.visibility = 'visible';
+                resolve();
+            }, 1000);
+        });
+    });
+
+
+</script>
+</html>
