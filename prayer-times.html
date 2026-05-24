@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أوقات الصلاة</title>
+</head>
+<style>
+    .city-group {
+        direction: rtl;
+        margin: 20px;
+        text-align: center;
+        background-color: aliceblue;
+    }
+
+    .date-group {
+        direction: rtl;
+        margin: 20px;
+        text-align: center;
+        background-color: aliceblue;
+    }
+
+    td {
+        text-align: center;
+        padding: 8px;
+    }
+</style>
+
+<body>
+    <h1 style="background-color: aqua; text-align: center;">أوقات الصلاة</h1>
+    <div class="city-group">
+        <label>اختر المدينة:</label>
+        <select id="citySelect">
+            <option value="aleppo">حلب</option>
+            <option value="damascus">دمشق</option>
+            <option value="homs">حمص</option>
+            <option value="hama">حماة</option>
+            <option value="idlib">إدلب</option>
+            <option value="daraa">درعا</option>
+            <option value="deira">دير الزور</option>
+        </select>
+    </div>
+
+    <div class="date-group">
+        <label>اختر التاريخ :</label>
+        <input type="date" id="dateInput">
+    </div>
+
+    <table id="table" style="width: 100%; border-collapse: collapse;" border="1">
+        <tr>
+            <th>الصلاة</th>
+            <th>الوقت</th>
+        </tr>
+        <tr>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> >
+<script>
+    // --------------- الحصول على تاريخ اليوم بصيغة YYYY-MM-DD ----------------------
+    const dateInput = document.getElementById('dateInput');
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const todayFormatted = `${year}-${month}-${day}`;
+    dateInput.value = todayFormatted;
+    console.log(todayFormatted);
+    //---------------------------------------------------------------
+
+    // --------------- تحديث أوقات الصلاة عند تغيير المدينة أو التاريخ ----------------------
+    const citySelect = document.getElementById('citySelect');
+    citySelect.addEventListener('change', getPrayerTimes);
+    dateInput.addEventListener('change', getPrayerTimes);
+
+    function getPrayerTimes() {
+        console.log('Fetching prayer times...');
+        const city = citySelect.value;
+        const date = dateInput.value;
+        console.log(date);
+
+        const url = `https://api.aladhan.com/v1/timingsByCity/${date}?city=${city}&country=Syria`;
+        console.log(url);
+        axios.get(url)
+            .then(response => {
+                document.getElementById("table").innerHTML = `<tr>
+            <th>الصلاة</th>
+            <th>الوقت</th>
+        </tr>
+        <tr>`;
+                const timings = response.data.data.timings;
+                console.log(timings);
+                for (const prayer in timings) {
+                    const time = timings[prayer];
+                    document.getElementById("table").innerHTML +=
+                        `<tr>
+            <td>${prayer}</td>
+            <td>${timings[prayer]}</td>
+        </tr>`
+                    console.log(prayer);
+                    console.log(time);
+                }
+
+            })
+            .catch(error => {
+                console.error('Error fetching prayer times:', error);
+            });
+    }
+    getPrayerTimes();
+
+</script>
+
+</html>
